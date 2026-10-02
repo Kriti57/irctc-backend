@@ -58,6 +58,3 @@ temp/
 .cache/
 .eslintcache
 coverage/
-
-# ============ Not committing yet ============
-api-gateway/

@@ -30,4 +30,31 @@ const getProfile = async (userId) => {
   return safeUser;
 };
 
-export default { getProfile };
+const updateProfile = async(userId, updateData) => {
+  const updatedUser = await prisma.user.update({
+    where: {id: userId},
+    data: updateData,
+  });
+
+  const {password: _password, ...safeUser} = updatedUser;
+
+  await redis.set(`user:${userId}`, JSON.stringify(safeUser), "EX", config.REDIS_USER_TTL);
+
+  return safeUser;
+}
+
+const deleteProfile = async (userId) => {
+  // Find and clear every refresh-token session across all devices
+  const refreshKeys = await redis.keys(`refresh:${userId}:*`);
+  if (refreshKeys.length > 0) {
+    await redis.del(...refreshKeys);
+  }
+
+  await redis.del(`user:${userId}`);
+
+  await prisma.user.delete({
+    where: { id: userId },
+  });
+};
+
+export default { getProfile, updateProfile, deleteProfile };
