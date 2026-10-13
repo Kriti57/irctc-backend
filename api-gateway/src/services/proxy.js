@@ -71,8 +71,9 @@ class CircuitBreaker {
 // create circuit breakers for each service
 const circuitBreakers = {
   userService: new CircuitBreaker("user-service"),
-  bookingService: new CircuitBreaker("booking-service"),
   searchService: new CircuitBreaker("search-service"),
+  adminService: new CircuitBreaker("admin-service"),
+  notificationService: new CircuitBreaker("notification-service"),
 };
 
 /**
